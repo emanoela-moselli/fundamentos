@@ -1,0 +1,6 @@
+applicationType: default
+defaultPackage: com.moselli.fundamentos
+testFramework: junit
+sourceLanguage: java
+buildTool: maven
+features: [annotation-api, app-name, data, data-jpa, http-client, java, java-application, jdbc-hikari, junit, log4j2, lombok, maven, mockito, postgres, readme, shade, testcontainers, tomcat-server, yaml]
