@@ -1,6 +1,10 @@
 package com.moselli.fundamentos.service;
 
+import java.util.List;
+
+import com.moselli.fundamentos.entity.StatusInvestData;
 import com.moselli.fundamentos.repository.StatusInvestDataRepository;
+
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
@@ -12,6 +16,10 @@ public class FundamentosService {
 
     public void updateStatusInvestData(){
         System.out.println("Testing");
+    }
+    
+    public List<StatusInvestData> listAll(){
+        return statusInvestDataRepository.findAll();
     }
 
 }

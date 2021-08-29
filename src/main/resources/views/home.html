@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{layoutFile :: layout(~{::title}, ~{::section})}" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Home</title>
+</head>
+<body>
+<section>
+   <table>
+    <thead>
+        <tr>
+            <th> companyId </th>
+            <th> companyName </th>
+        </tr>
+    </thead>
+    <tbody>
+	<tr th:if="${StatusInvestData.empty}">
+            <td colspan="2"> No Company found </td>
+        </tr>
+        <tr th:each="c : ${StatusInvestData}">
+            <td><span th:text="${c.companyId}"> companyId </span></td>
+            <td><span th:text="${c.companyName}"> companyName </span></td>
+        </tr>
+    </tbody>
+</table>
+</section>
+</body>
+</html>

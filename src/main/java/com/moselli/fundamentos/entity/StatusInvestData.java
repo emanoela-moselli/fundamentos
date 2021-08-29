@@ -1,12 +1,14 @@
 package com.moselli.fundamentos.entity;
 
-import lombok.Data;
-
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import io.micronaut.core.annotation.Introspected;
+import lombok.Data;
+
 @Data
 @Entity
+@Introspected(packages="com.moselli.fundamentos.entity", includedAnnotations=Entity.class)
 public class StatusInvestData {
 
     @Id
