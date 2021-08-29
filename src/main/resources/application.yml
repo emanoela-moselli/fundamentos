@@ -20,3 +20,15 @@ router:
       main:
         paths: classpath:views
         mapping: /views/**  
+endpoints:
+  loggers:
+    enabled: true
+  beans:
+    enabled: true
+  routes:
+    enabled: true
+  health:
+    enabled: true
+    details-visible: ANONYMOUS
+  info:
+    enabled: true
