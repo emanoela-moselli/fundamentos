@@ -40,17 +40,17 @@ public class StatusInvestData {
     @JsonProperty("eV_Ebit")
     private Double evEbit;
 
-    private Double margemBruta;
+    private Double margemBruta = 0.0;
 
-    private Double margemEbit;
+    private Double margemEbit = 0.0;
 
-    private Double margemLiquida;
+    private Double margemLiquida = 0.0;
 
     @JsonProperty("p_SR")
-    private Double pSr;
+    private Double pSr = 0.0;
 
     @JsonProperty("p_CapitalGiro")
-    private Double pCapitalGiro;
+    private Double pCapitalGiro = 0.0;
 
     @JsonProperty("p_AtivoCirculante")
     private Double pAtivoCirculante;
@@ -61,12 +61,12 @@ public class StatusInvestData {
 
     private Double roa;
 
-    private Double roic;
+    private Double roic = 0.0;
 
     @JsonProperty("dividaliquidaPatrimonioLiquido")
-    private Double dividaLiquidaPatrimonioLiquido;
+    private Double dividaLiquidaPatrimonioLiquido = 0.0;
 
-    private Double dividaLiquidaEbit;
+    private Double dividaLiquidaEbit = 0.0;
 
     @JsonProperty("pl_Ativo")
     private Double plAtivo;
@@ -74,18 +74,18 @@ public class StatusInvestData {
     @JsonProperty("passivo_Ativo")
     private Double passivoAtivo;
 
-    private Double liquidezCorrente;
+    private Double liquidezCorrente = 0.0;
 
     @JsonProperty("peg_Ratio")
-    private Double pegRatio;
+    private Double pegRatio = 0.0;
 
     @JsonProperty("receitas_Cagr5")
-    private Double receitasCagr5;
+    private Double receitasCagr5 = 0.0;
 
     @JsonProperty("lucros_Cagr5")
-    private Double lucrosCagr5;
+    private Double lucrosCagr5 = 0.0;
 
-    private Double liquidezMediaDiaria;
+    private Double liquidezMediaDiaria = 0.0;
 
     private Double vpa;
 
