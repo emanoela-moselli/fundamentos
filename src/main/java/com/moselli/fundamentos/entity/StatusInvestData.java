@@ -1,5 +1,6 @@
 package com.moselli.fundamentos.entity;
 
+import io.micronaut.core.annotation.Introspected;
 import lombok.Data;
 
 import javax.persistence.Entity;
@@ -7,12 +8,13 @@ import javax.persistence.Id;
 
 @Data
 @Entity
+@Introspected(includedAnnotations = Entity.class)
 public class StatusInvestData {
 
     @Id
+    private String ticker;
     private Long companyId;
     private String companyName;
-    private String ticker;
     private Double price;
     private Double pl;
     private Double pVp;

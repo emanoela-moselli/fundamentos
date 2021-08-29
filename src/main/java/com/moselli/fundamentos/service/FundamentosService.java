@@ -1,17 +1,25 @@
 package com.moselli.fundamentos.service;
 
+import com.moselli.fundamentos.client.StatusInvestClient;
 import com.moselli.fundamentos.repository.StatusInvestDataRepository;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import lombok.extern.java.Log;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
+@Log
 @Singleton
 public class FundamentosService {
 
     @Inject
     private StatusInvestDataRepository statusInvestDataRepository;
 
-    public void updateStatusInvestData(){
-        System.out.println("Testing");
+    @Inject
+    private StatusInvestClient statusInvestClient;
+
+    public Mono<Void> updateStatusInvestData(){
+        return Flux.from(statusInvestClient.fetchData()).log().map(statusInvestDataRepository::update).doOnComplete(() -> log.info("Reload complete")).then();
     }
 
 }
