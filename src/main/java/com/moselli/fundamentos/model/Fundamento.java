@@ -56,6 +56,9 @@ public class Fundamento {
     private Double mediaCrescimento;
 
     public void calculateFields() {
+        this.roe = this.roe / 100.0;
+        this.dy = this.dy / 100.0;
+        this.lucrosCagr5 = this.lucrosCagr5 / 100.0;
         this.dpa = this.price * this.dy;
         this.valuationBazin = this.dpa / 0.06;
         this.descontoBazin = (this.valuationBazin - this.price) / this.valuationBazin;
