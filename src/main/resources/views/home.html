@@ -8,17 +8,76 @@
    <table>
     <thead>
         <tr>
-            <th> companyId </th>
-            <th> companyName </th>
+            <th> Company Id </th>
+            <th> Company Name </th>
+            <th> Price </th>
+            <th> DY </th>
+            <th> pl </th>
+            <th> pVp </th>
+            <th> pAtivo </th>
+            <th> pEbit </th>
+            <th> evEbit </th>
+            <th> margemBruta </th>
+            <th> margemEbit </th>
+            <th> margemLiquida </th>
+            <th> pSr </th>
+            <th> pCapitalGiro </th>
+            <th> pAtivoCirculante </th>
+            <th> giroAtivos </th>
+            <th> roe </th>
+            <th> roa </th>
+            <th> roic </th>
+            <th> dividaLiquidaPatrimonioLiquido </th>
+            <th> dividaLiquidaEbit </th>
+            <th> plAtivo </th>
+            <th> passivoAtivo </th>
+            <th> liquidezCorrente </th>
+            <th> pegRatio </th>
+            <th> receitasCagr5 </th>
+            <th> lucrosCagr5 </th>
+            <th> liquidezMediaDiaria </th>
+            <th> vpa </th>
+            <th> lpa </th>
+            <th> valorMercado </th>
+
         </tr>
     </thead>
     <tbody>
-	<tr th:if="${StatusInvestData.empty}">
+	<tr th:if="${statusInvestData.empty}">
             <td colspan="2"> No Company found </td>
         </tr>
-        <tr th:each="c : ${StatusInvestData}">
+        <tr th:each="c : ${statusInvestData}">
             <td><span th:text="${c.companyId}"> companyId </span></td>
             <td><span th:text="${c.companyName}"> companyName </span></td>
+            <td><span th:text="${c.price}"> price </span></td>
+            <td><span th:text="${c.dy}"> dy </span></td>
+            <td><span th:text="${c.pl}"> pl </span></td>
+           <td><span th:text="${c.pVp}"> pVp </span></td>
+            <td><span th:text="${c.pAtivo}"> pAtivo </span></td>
+            <td><span th:text="${c.pEbit}"> pEbit </span></td>
+            <td><span th:text="${c.evEbit}"> evEbit </span></td>
+            <td><span th:text="${c.margemBruta}"> margemBruta </span></td>
+            <td><span th:text="${c.margemEbit}"> margemEbit </span></td>
+            <td><span th:text="${c.margemLiquida}"> margemLiquida </span></td>
+            <td><span th:text="${c.pSr}"> pSr </span></td>
+            <td><span th:text="${c.pCapitalGiro}"> pCapitalGiro </span></td>
+            <td><span th:text="${c.pAtivoCirculante}"> pAtivoCirculante </span></td>
+            <td><span th:text="${c.giroAtivos}"> giroAtivos </span></td>
+            <td><span th:text="${c.roe}"> roe </span></td>
+            <td><span th:text="${c.roa}"> roa </span></td>
+            <td><span th:text="${c.roic}"> roic </span></td>
+            <td><span th:text="${c.dividaLiquidaPatrimonioLiquido}"> dividaLiquidaPatrimonioLiquido </span></td>
+            <td><span th:text="${c.dividaLiquidaEbit}"> dividaLiquidaEbit </span></td>
+            <td><span th:text="${c.plAtivo}"> plAtivo </span></td>
+            <td><span th:text="${c.passivoAtivo}"> passivoAtivo </span></td>
+            <td><span th:text="${c.liquidezCorrente}"> liquidezCorrente </span></td>
+            <td><span th:text="${c.pegRatio}"> pegRatio </span></td>
+            <td><span th:text="${c.receitasCagr5}"> receitasCagr5 </span></td>
+            <td><span th:text="${c.lucrosCagr5}"> lucrosCagr5 </span></td>
+            <td><span th:text="${c.liquidezMediaDiaria}"> liquidezMediaDiaria </span></td>
+            <td><span th:text="${c.vpa}"> vpa </span></td>
+            <td><span th:text="${c.lpa}"> lpa </span></td>
+            <td><span th:text="${c.valorMercado}"> valorMercado </span></td>
         </tr>
     </tbody>
 </table>

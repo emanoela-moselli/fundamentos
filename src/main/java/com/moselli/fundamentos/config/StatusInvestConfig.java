@@ -1,10 +1,5 @@
 package com.moselli.fundamentos.config;
 
-import io.micronaut.context.annotation.ConfigurationProperties;
-import io.micronaut.context.annotation.Requires;
-import lombok.Getter;
-import lombok.Setter;
-
 public interface StatusInvestConfig {
 
     String STATUS_INVEST_PREFIX = "status-invest";
