@@ -6,6 +6,10 @@
         <span v-if="!loading" class="stock-count">{{ sorted.length }} ações</span>
       </div>
       <div class="toolbar-right">
+        <select v-model="sectorFilter" class="sector-select">
+          <option value="">Todos os setores</option>
+          <option v-for="s in sectors" :key="s" :value="s">{{ s }}</option>
+        </select>
         <input
           v-model="filter"
           class="filter-input"
@@ -42,11 +46,21 @@
           <tr v-for="stock in sorted" :key="stock.ticker">
             <td class="ticker">{{ stock.ticker }}</td>
             <td class="company">{{ stock.companyName }}</td>
+            <td class="sector">{{ stock.setorEconomico || '—' }}</td>
             <td class="number">{{ fmt(stock.price, 'currency') }}</td>
             <td class="number">{{ fmt(stock.pl, 'number') }}</td>
             <td class="number">{{ fmt(stock.pVp, 'number') }}</td>
             <td class="number">{{ fmt(stock.dy, 'percent') }}</td>
             <td class="number">{{ fmt(stock.roe, 'percent') }}</td>
+            <td class="number">{{ fmt(stock.lpa, 'number') }}</td>
+            <td class="number">{{ fmt(stock.vpa, 'number') }}</td>
+            <td class="number">{{ fmt(stock.dpa, 'currency') }}</td>
+            <td class="number">{{ fmt(stock.payout, 'percent') }}</td>
+            <td class="number">{{ fmt(stock.lucrosCagr5, 'percent') }}</td>
+            <td class="number">{{ fmt(stock.crescimentoEsperado, 'percent') }}</td>
+            <td class="number">{{ fmt(stock.mediaCrescimento, 'percent') }}</td>
+            <td class="number">{{ fmt(stock.pegRatio, 'number') }}</td>
+            <td class="number">{{ fmt(stock.valorMercado, 'compact') }}</td>
             <td class="number">{{ fmt(stock.valuationBazin, 'currency') }}</td>
             <td :class="['number', 'discount', discountClass(stock.descontoBazin)]">
               {{ fmt(stock.descontoBazin, 'discount') }}
@@ -77,23 +91,39 @@ const loading = ref(false)
 const reloading = ref(false)
 const error = ref(null)
 const filter = ref('')
+const sectorFilter = ref('')
 const sortColumn = ref('ticker')
 const sortAsc = ref(true)
 
+const sectors = computed(() => {
+  const set = new Set(stocks.value.map(s => s.setorEconomico).filter(Boolean))
+  return ['', ...Array.from(set).sort()]
+})
+
 const columns = [
-  { key: 'ticker',          label: 'Ticker' },
-  { key: 'companyName',     label: 'Empresa' },
-  { key: 'price',           label: 'Preço',        format: 'currency' },
-  { key: 'pl',              label: 'P/L',           format: 'number' },
-  { key: 'pVp',             label: 'P/VP',          format: 'number' },
-  { key: 'dy',              label: 'DY',            format: 'percent' },
-  { key: 'roe',             label: 'ROE',           format: 'percent' },
-  { key: 'valuationBazin',  label: 'Bazin',         format: 'currency' },
-  { key: 'descontoBazin',   label: 'Desc. Bazin',   format: 'discount' },
-  { key: 'valuationGraham', label: 'Graham',        format: 'currency' },
-  { key: 'descontoGraham',  label: 'Desc. Graham',  format: 'discount' },
-  { key: 'valuationGordon', label: 'Gordon',        format: 'currency' },
-  { key: 'descontoGordon',  label: 'Desc. Gordon',  format: 'discount' },
+  { key: 'ticker',              label: 'Ticker' },
+  { key: 'companyName',         label: 'Empresa' },
+  { key: 'setorEconomico',      label: 'Setor' },
+  { key: 'price',               label: 'Preço',           format: 'currency' },
+  { key: 'pl',                  label: 'P/L',             format: 'number' },
+  { key: 'pVp',                 label: 'P/VP',            format: 'number' },
+  { key: 'dy',                  label: 'DY',              format: 'percent' },
+  { key: 'roe',                 label: 'ROE',             format: 'percent' },
+  { key: 'lpa',                 label: 'LPA',             format: 'number' },
+  { key: 'vpa',                 label: 'VPA',             format: 'number' },
+  { key: 'dpa',                 label: 'DPA',             format: 'currency' },
+  { key: 'payout',              label: 'Payout',          format: 'percent' },
+  { key: 'lucrosCagr5',         label: 'CAGR L 5A',       format: 'percent' },
+  { key: 'crescimentoEsperado', label: 'Cresc. Esp.',     format: 'percent' },
+  { key: 'mediaCrescimento',    label: 'Méd. Cresc.',     format: 'percent' },
+  { key: 'pegRatio',            label: 'PEG',             format: 'number' },
+  { key: 'valorMercado',        label: 'Valor Mercado',   format: 'compact' },
+  { key: 'valuationBazin',      label: 'Bazin',           format: 'currency' },
+  { key: 'descontoBazin',       label: 'Desc. Bazin',     format: 'discount' },
+  { key: 'valuationGraham',     label: 'Graham',          format: 'currency' },
+  { key: 'descontoGraham',      label: 'Desc. Graham',    format: 'discount' },
+  { key: 'valuationGordon',     label: 'Gordon',          format: 'currency' },
+  { key: 'descontoGordon',      label: 'Desc. Gordon',    format: 'discount' },
 ]
 
 async function fetchStocks() {
@@ -131,10 +161,12 @@ function setSort(key) {
 
 const filtered = computed(() => {
   const q = filter.value.toLowerCase()
-  if (!q) return stocks.value
-  return stocks.value.filter(s =>
-    s.ticker?.toLowerCase().includes(q) || s.companyName?.toLowerCase().includes(q)
-  )
+  const sec = sectorFilter.value
+  return stocks.value.filter(s => {
+    const matchText = !q || s.ticker?.toLowerCase().includes(q) || s.companyName?.toLowerCase().includes(q)
+    const matchSector = !sec || s.setorEconomico === sec
+    return matchText && matchSector
+  })
 })
 
 const sorted = computed(() => {
@@ -155,6 +187,11 @@ function fmt(value, format) {
     case 'percent':  return `${(value * 100).toFixed(1)}%`
     case 'discount': return `${(value * 100).toFixed(1)}%`
     case 'number':   return value.toFixed(2)
+    case 'compact': {
+      if (value >= 1e9) return `R$ ${(value / 1e9).toFixed(1)}B`
+      if (value >= 1e6) return `R$ ${(value / 1e6).toFixed(0)}M`
+      return `R$ ${value.toFixed(0)}`
+    }
     default:         return value
   }
 }
@@ -205,6 +242,19 @@ h1 { font-size: 18px; font-weight: 600; color: #7c9ef5; letter-spacing: 0.3px; }
 .stock-count { font-size: 12px; color: #64748b; }
 
 .toolbar-right { display: flex; align-items: center; gap: 10px; }
+
+.sector-select {
+  padding: 7px 10px;
+  border: 1px solid #2d3148;
+  border-radius: 6px;
+  background: #0f1117;
+  color: #e2e8f0;
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.sector-select:focus { border-color: #7c9ef5; }
 
 .filter-input {
   padding: 7px 12px;
@@ -305,6 +355,7 @@ td {
 
 td.ticker { font-weight: 600; color: #7c9ef5; font-size: 13px; }
 td.company { color: #94a3b8; max-width: 200px; overflow: hidden; text-overflow: ellipsis; }
+td.sector  { color: #94a3b8; max-width: 160px; overflow: hidden; text-overflow: ellipsis; }
 td.number { text-align: right; font-variant-numeric: tabular-nums; }
 
 /* ── Discount colors ── */
