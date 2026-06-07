@@ -57,6 +57,7 @@ public class Fundamento {
     private Double payout;
     private Double crescimentoEsperado;
     private Double mediaCrescimento;
+    private Double valorMercado;
 
     public static Fundamento from(StatusInvestData data) {
         Fundamento f = new Fundamento();
@@ -91,6 +92,7 @@ public class Fundamento {
         f.setLiquidezMediaDiaria(data.getLiquidezMediaDiaria());
         f.setVpa(data.getVpa());
         f.setLpa(data.getLpa());
+        f.setValorMercado(data.getValorMercado());
         ClassificacaoB3 c = data.getClassificacaoB3();
         if (c != null) {
             f.setSetorEconomico(c.getSetorEconomico());
