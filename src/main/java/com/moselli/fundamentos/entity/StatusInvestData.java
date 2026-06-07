@@ -1,6 +1,5 @@
 package com.moselli.fundamentos.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
 import jakarta.persistence.Entity;
@@ -32,19 +31,14 @@ public class StatusInvestData {
 
     private Double dy = 0.0;
 
-    @JsonProperty("p_L")
     private Double pl;
 
-    @JsonProperty("p_VP")
     private Double pVp;
 
-    @JsonProperty("p_Ativo")
     private Double pAtivo;
 
-    @JsonProperty("p_Ebit")
     private Double pEbit;
 
-    @JsonProperty("eV_Ebit")
     private Double evEbit;
 
     private Double margemBruta = 0.0;
@@ -53,13 +47,10 @@ public class StatusInvestData {
 
     private Double margemLiquida = 0.0;
 
-    @JsonProperty("p_SR")
     private Double pSr = 0.0;
 
-    @JsonProperty("p_CapitalGiro")
     private Double pCapitalGiro = 0.0;
 
-    @JsonProperty("p_AtivoCirculante")
     private Double pAtivoCirculante;
 
     private Double giroAtivos;
@@ -70,26 +61,20 @@ public class StatusInvestData {
 
     private Double roic = 0.0;
 
-    @JsonProperty("dividaliquidaPatrimonioLiquido")
     private Double dividaLiquidaPatrimonioLiquido = 0.0;
 
     private Double dividaLiquidaEbit = 0.0;
 
-    @JsonProperty("pl_Ativo")
     private Double plAtivo;
 
-    @JsonProperty("passivo_Ativo")
     private Double passivoAtivo;
 
     private Double liquidezCorrente = 0.0;
 
-    @JsonProperty("peg_Ratio")
     private Double pegRatio = 0.0;
 
-    @JsonProperty("receitas_Cagr5")
     private Double receitasCagr5 = 0.0;
 
-    @JsonProperty("lucros_Cagr5")
     private Double lucrosCagr5 = 0.0;
 
     private Double liquidezMediaDiaria = 0.0;
