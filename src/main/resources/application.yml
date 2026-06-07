@@ -7,15 +7,6 @@ micronaut:
         url: https://statusinvest.com.br
         read-timeout: 30s
 
-datasources:
-  default:
-    url: jdbc:postgresql://localhost:5432/postgres
-    driverClassName: org.postgresql.Driver
-    username: postgres
-    password: 'postgres'
-    schema-generate: CREATE_DROP
-    dialect: POSTGRES
-
 jpa:
   default:
     reactive: true
