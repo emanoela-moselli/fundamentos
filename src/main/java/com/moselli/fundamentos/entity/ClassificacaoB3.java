@@ -1,8 +1,10 @@
 package com.moselli.fundamentos.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import lombok.Getter;
 
+@Getter
 @Entity
 public class ClassificacaoB3 {
 

@@ -2,16 +2,23 @@ package com.moselli.fundamentos.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.core.annotation.Introspected;
-import lombok.Data;
+import io.micronaut.serde.annotation.Serdeable;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import lombok.*;
+import org.hibernate.proxy.HibernateProxy;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import java.util.Objects;
 
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Entity
 @Introspected(includedAnnotations = Entity.class)
+@Serdeable
 public class StatusInvestData {
 
     @Id
@@ -97,4 +104,19 @@ public class StatusInvestData {
     @JoinColumn(name = "ticker", referencedColumnName = "ticker")
     private ClassificacaoB3 classificacaoB3;
 
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
+        if (thisEffectiveClass != oEffectiveClass) return false;
+        StatusInvestData that = (StatusInvestData) o;
+        return getTicker() != null && Objects.equals(getTicker(), that.getTicker());
+    }
+
+    @Override
+    public final int hashCode() {
+        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+    }
 }

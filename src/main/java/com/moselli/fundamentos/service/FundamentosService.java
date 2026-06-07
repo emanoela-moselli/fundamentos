@@ -9,10 +9,6 @@ import lombok.extern.java.Log;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
 @Log
 @Singleton
 public class FundamentosService {
@@ -23,14 +19,18 @@ public class FundamentosService {
     @Inject
     private StatusInvestClient statusInvestClient;
 
-    public Mono<Void> updateStatusInvestData(){
-        return Flux.from(statusInvestClient.fetchData()).log().map(statusInvestDataRepository::update).doOnComplete(() -> log.info("Reload complete")).then();
+    public Mono<Void> updateStatusInvestData() {
+        return Flux.from(statusInvestClient.fetchData())
+                .log()
+                .flatMap(statusInvestDataRepository::update)
+                .doOnError(e -> log.severe("Failed to reload StatusInvest data: " + e.getMessage()))
+                .onErrorResume(e -> Flux.empty())
+                .doOnComplete(() -> log.info("Reload complete"))
+                .then();
     }
 
-    public List<StatusInvestData> findAll(){
-        return StreamSupport
-                .stream(statusInvestDataRepository.findAll().spliterator(), false)
-                .collect(Collectors.toList());
+    public Flux<StatusInvestData> findAll() {
+        return statusInvestDataRepository.findAll();
     }
 
 }

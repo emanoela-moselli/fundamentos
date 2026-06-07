@@ -9,7 +9,7 @@ import org.reactivestreams.Publisher;
 
 import static io.micronaut.http.HttpHeaders.ACCEPT;
 
-@Client(StatusInvestConfig.STATUS_INVEST_API_URL_PREFIX)
+@Client("status-invest")
 @Header(name = ACCEPT, value = "application/json")
 public interface StatusInvestClient {
 
