@@ -129,11 +129,10 @@ Relevant methods for the stock flow:
 
 ## API Endpoints
 
-| Method | Path | Response | Description |
-|---|---|---|---|
-| `GET` | `/api/all` | `List<Fundamento>` | Stocks with computed valuation fields |
-| `GET` | `/api/raw` | `List<Stock>` | Raw stock data, no derived fields |
-| `POST` | `/api/reload` | `String` | Triggers a full stock data refresh from StatusInvest |
+| Method | Path                 | Response | Description |
+|---|----------------------|---|---|
+| `GET` | `/api/stocks`        | `List<Fundamento>` | Stocks with computed valuation fields |
+| `POST` | `/api/stocks/reload` | `String` | Triggers a full stock data refresh from StatusInvest |
 
 ---
 

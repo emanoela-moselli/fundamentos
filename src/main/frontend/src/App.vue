@@ -211,7 +211,7 @@ async function fetchStocks() {
   loading.value = true
   error.value = null
   try {
-    const res = await fetch('/api/all')
+    const res = await fetch('/api/stocks')
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     stocks.value = await res.json()
   } catch (e) {
@@ -239,7 +239,7 @@ async function reloadData() {
   reloading.value = true
   error.value = null
   try {
-    const url = activeTab.value === 'stocks' ? '/api/reload' : '/api/fiis/reload'
+    const url = activeTab.value === 'stocks' ? '/api/stocks/reload' : '/api/fiis/reload'
     const res = await fetch(url, { method: 'POST' })
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     if (activeTab.value === 'stocks') await fetchStocks()

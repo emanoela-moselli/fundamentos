@@ -1,8 +1,7 @@
 package com.moselli.fundamentos.controller;
 
-import com.moselli.fundamentos.entity.Stock;
 import com.moselli.fundamentos.model.FII;
-import com.moselli.fundamentos.model.Fundamento;
+import com.moselli.fundamentos.model.Stock;
 import com.moselli.fundamentos.service.FundamentosService;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
@@ -20,30 +19,25 @@ public class FundamentosController {
     @Inject
     private FundamentosService fundamentosService;
 
-    @Post("/reload")
-    public Mono<String> reload() {
-        return fundamentosService.updateStocks().thenReturn("Reload Complete!");
+    @Post("/stocks/reload")
+    public Mono<String> reloadStocks() {
+        return fundamentosService.updateStocks().thenReturn("Stock Reload Complete!");
     }
 
     @Post("/fiis/reload")
-    public Mono<String> reloadFII() {
+    public Mono<String> reloadFIIs() {
         return fundamentosService.updateFIIData().thenReturn("FII Reload Complete!");
     }
 
-    @Get("/raw")
-    public Mono<List<Stock>> getRaw() {
-        return fundamentosService.findAll().collectList();
-    }
-
-    @Get("/all")
-    public Mono<List<Fundamento>> getAll() {
+    @Get("/stocks")
+    public Mono<List<Stock>> getAllStocks() {
         return fundamentosService.findAll()
-                .map(Fundamento::from)
+                .map(Stock::from)
                 .collectList();
     }
 
     @Get("/fiis")
-    public Mono<List<FII>> getAllFII() {
+    public Mono<List<FII>> getAllFIIs() {
         return fundamentosService.findAllFII()
                 .map(FII::from)
                 .collectList();
