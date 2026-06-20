@@ -2,7 +2,9 @@ package com.moselli.fundamentos.service;
 
 import com.moselli.fundamentos.client.StatusInvestApiItem;
 import com.moselli.fundamentos.client.StatusInvestClient;
+import com.moselli.fundamentos.entity.FIIData;
 import com.moselli.fundamentos.entity.StatusInvestData;
+import com.moselli.fundamentos.repository.FIIDataRepository;
 import com.moselli.fundamentos.repository.StatusInvestDataRepository;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -18,16 +20,32 @@ public class FundamentosService {
     private StatusInvestDataRepository statusInvestDataRepository;
 
     @Inject
+    private FIIDataRepository fiiDataRepository;
+
+    @Inject
     private StatusInvestClient statusInvestClient;
 
     public Mono<Void> updateStatusInvestData() {
-        return statusInvestClient.fetchData()
+        return statusInvestDataRepository.deleteAll()
+                .then(statusInvestClient.fetchStocksData())
                 .flatMapMany(response -> Flux.fromIterable(response.getList()))
-                .map(FundamentosService::toEntity)
+                .map(FundamentosService::toStockEntity)
                 .flatMap(statusInvestDataRepository::save)
-                .doOnError(e -> log.severe("Failed to reload StatusInvest data: " + e.getMessage()))
+                .doOnError(e -> log.severe("Failed to reload stocks data: " + e.getMessage()))
                 .onErrorResume(e -> Flux.empty())
-                .doOnComplete(() -> log.info("Reload complete"))
+                .doOnComplete(() -> log.info("Stocks reload complete"))
+                .then();
+    }
+
+    public Mono<Void> updateFIIData() {
+        return fiiDataRepository.deleteAll()
+                .then(statusInvestClient.fetchFiiData())
+                .flatMapMany(response -> Flux.fromIterable(response.getList()))
+                .map(FundamentosService::toFIIEntity)
+                .flatMap(fiiDataRepository::save)
+                .doOnError(e -> log.severe("Failed to reload FII data: " + e.getMessage()))
+                .onErrorResume(e -> Flux.empty())
+                .doOnComplete(() -> log.info("FII reload complete"))
                 .then();
     }
 
@@ -35,7 +53,11 @@ public class FundamentosService {
         return statusInvestDataRepository.findAll();
     }
 
-    private static StatusInvestData toEntity(StatusInvestApiItem item) {
+    public Flux<FIIData> findAllFII() {
+        return fiiDataRepository.findAll();
+    }
+
+    private static StatusInvestData toStockEntity(StatusInvestApiItem item) {
         StatusInvestData e = new StatusInvestData();
         e.setTicker(item.getTicker());
         e.setCompanyId(item.getCompanyId());
@@ -69,6 +91,28 @@ public class FundamentosService {
         e.setVpa(item.getVpa());
         e.setLpa(item.getLpa());
         e.setValorMercado(item.getValorMercado());
+        return e;
+    }
+
+    private static FIIData toFIIEntity(StatusInvestApiItem item) {
+        FIIData e = new FIIData();
+        e.setTicker(item.getTicker());
+        e.setCompanyId(item.getCompanyId());
+        e.setCompanyName(item.getCompanyName());
+        e.setSector(item.getSegment());
+        e.setGestao(item.getGestao());
+        e.setPrice(item.getPrice());
+        e.setDy(item.getDy() != null ? item.getDy() : 0.0);
+        e.setPVp(item.getPVp());
+        e.setVpa(item.getVpa());
+        e.setLastDividend(item.getLastDividend() != null ? item.getLastDividend() : 0.0);
+        e.setLiquidezMediaDiaria(item.getLiquidezMediaDiaria() != null ? item.getLiquidezMediaDiaria() : 0.0);
+        e.setPercentualEmCaixa(item.getPercentualEmCaixa() != null ? item.getPercentualEmCaixa() : 0.0);
+        e.setDividendoCagr3Anos(item.getDividendoCagr3Anos() != null ? item.getDividendoCagr3Anos() : 0.0);
+        e.setCotaCagr3Anos(item.getCotaCagr3Anos() != null ? item.getCotaCagr3Anos() : 0.0);
+        e.setPatrimonio(item.getPatrimonio());
+        e.setNumeroCotistas(item.getNumeroCotistas());
+        e.setNumeroCotas(item.getNumeroCotas());
         return e;
     }
 }

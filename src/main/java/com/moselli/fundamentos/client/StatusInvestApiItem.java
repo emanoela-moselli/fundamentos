@@ -97,4 +97,29 @@ public class StatusInvestApiItem {
 
     @JsonProperty("valormercado")
     private Double valorMercado;
+
+    // FII-specific fields
+    private String segment;
+
+    private String gestao;
+
+    @JsonProperty("lastdividend")
+    private Double lastDividend;
+
+    @JsonProperty("percentualcaixa")
+    private Double percentualEmCaixa;
+
+    @JsonProperty("dividend_cagr")
+    private Double dividendoCagr3Anos;
+
+    @JsonProperty("cota_cagr")
+    private Double cotaCagr3Anos;
+
+    private Double patrimonio;
+
+    @JsonProperty("numerocotistas")
+    private Long numeroCotistas;
+
+    @JsonProperty("numerocotas")
+    private Long numeroCotas;
 }

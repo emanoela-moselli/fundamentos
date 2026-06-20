@@ -231,11 +231,11 @@ A dropdown to filter by FII sector type (in addition to the existing text filter
 
 ## 6. Delivery Sequence
 
-1. **FIIData entity + migration** — create table, verify API JSON mapping
-2. **FIIClient + FIIDataRepository** — fetch and persist raw data
-3. **FII model** — Gordon and Bazin valuations
-4. **API endpoints** — `/api/fiis` and `/api/fiis/reload`
-5. **Frontend FII tab** — table with monitor columns and basic valuations
-6. **Sector dropdown filter**
+1. ✅ **FIIData entity + migration** — `FIIData.java` JPA entity; Hibernate `hbm2ddl.auto=update` creates `fii_data` table automatically
+2. ✅ **FIIClient + FIIDataRepository** — `fetchFiiData()` added to `StatusInvestClient`; `FIIDataRepository` extends `ReactorCrudRepository`; FII-specific fields added to `StatusInvestApiItem` (`segment`, `gestao`, `lastdividend`, `percentualcaixa`, `dividend_cagr`, `cota_cagr`, `patrimonio`, `numerocotistas`, `numerocotas`)
+3. ✅ **FII model** — `FII.java` with Gordon (`dpa × (1 + dividendoCagr3Anos) / 0.12`) and Bazin (`dpa / 0.06`) valuations; percentages normalised (÷100) in `calculateFields()`
+4. ✅ **API endpoints** — `POST /api/fiis/reload` and `GET /api/fiis` added to `FundamentosController`; `FundamentosService` now has separate `updateFIIData()` and `findAllFII()` methods (FIIs and stocks no longer share the same table)
+5. ✅ **Frontend FII tab** — Ações / FIIs tab switcher; FII table with 15 columns (Ticker, Fundo, Segmento, Cotação, DY, P/VP, Últ. Div., Caixa %, CAGR Div 3A, CAGR Cota 3A, Liquidez, Bazin FII, Desc. Bazin, Gordon FII, Desc. Gordon)
+6. ✅ **Sector dropdown filter** — adapts to active tab (`setorEconomico` for Ações, `sector` for FIIs); reloads lazily on first tab visit
 7. *(Follow-up)* Tijolo DCF Scenario 1
 8. *(Follow-up)* Tijolo DCF Scenario 2 / Papel model

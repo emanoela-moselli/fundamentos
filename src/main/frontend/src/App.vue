@@ -3,11 +3,21 @@
     <header class="toolbar">
       <div class="toolbar-left">
         <h1>Fundamentos B3</h1>
-        <span v-if="!loading" class="stock-count">{{ sorted.length }} ações</span>
+        <div class="tabs">
+          <button
+            :class="['tab-btn', { active: activeTab === 'stocks' }]"
+            @click="switchTab('stocks')"
+          >Ações</button>
+          <button
+            :class="['tab-btn', { active: activeTab === 'fiis' }]"
+            @click="switchTab('fiis')"
+          >FIIs</button>
+        </div>
+        <span v-if="!loading" class="item-count">{{ sorted.length }} {{ activeTab === 'stocks' ? 'ações' : 'FIIs' }}</span>
       </div>
       <div class="toolbar-right">
         <select v-model="sectorFilter" class="sector-select">
-          <option value="">Todos os setores</option>
+          <option value="">Todos os {{ activeTab === 'stocks' ? 'setores' : 'segmentos' }}</option>
           <option v-for="s in sectors" :key="s" :value="s">{{ s }}</option>
         </select>
         <input
@@ -28,11 +38,12 @@
     <div v-if="loading" class="loading">Carregando...</div>
 
     <div v-else class="table-wrapper">
-      <table>
+      <!-- Ações table -->
+      <table v-if="activeTab === 'stocks'">
         <thead>
           <tr>
             <th
-              v-for="col in columns"
+              v-for="col in stockColumns"
               :key="col.key"
               :class="['sortable', { active: sortColumn === col.key }]"
               @click="setSort(col.key)"
@@ -75,7 +86,50 @@
             </td>
           </tr>
           <tr v-if="sorted.length === 0">
-            <td :colspan="columns.length" class="empty">Nenhuma ação encontrada.</td>
+            <td :colspan="stockColumns.length" class="empty">Nenhuma ação encontrada.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- FIIs table -->
+      <table v-else>
+        <thead>
+          <tr>
+            <th
+              v-for="col in fiiColumns"
+              :key="col.key"
+              :class="['sortable', { active: sortColumn === col.key }]"
+              @click="setSort(col.key)"
+            >
+              {{ col.label }}
+              <span class="sort-arrow">{{ sortColumn === col.key ? (sortAsc ? '▲' : '▼') : '⇅' }}</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="fii in sorted" :key="fii.ticker">
+            <td class="ticker">{{ fii.ticker }}</td>
+            <td class="company">{{ fii.companyName }}</td>
+            <td class="sector">{{ fii.sector || '—' }}</td>
+            <td class="number">{{ fmt(fii.price, 'currency') }}</td>
+            <td class="number">{{ fmt(fii.dy, 'percent') }}</td>
+            <td class="number">{{ fmt(fii.pVp, 'number') }}</td>
+            <td class="number">{{ fmt(fii.lastDividend, 'currency') }}</td>
+            <td class="number">{{ fmt(fii.percentualEmCaixa, 'percent') }}</td>
+            <td class="number">{{ fmt(fii.dividendoCagr3Anos, 'percent') }}</td>
+            <td class="number">{{ fmt(fii.cotaCagr3Anos, 'percent') }}</td>
+            <td class="number">{{ fmt(fii.liquidezMediaDiaria, 'compact') }}</td>
+            <td class="number">{{ fmt(fii.valuationBazinFII, 'currency') }}</td>
+            <td :class="['number', 'discount', discountClass(fii.descontoBazinFII)]">
+              {{ fmt(fii.descontoBazinFII, 'discount') }}
+            </td>
+            <td class="number">{{ fmt(fii.valuationGordonFII, 'currency') }}</td>
+            <td :class="['number', 'discount', discountClass(fii.descontoGordonFII)]">
+              {{ fmt(fii.descontoGordonFII, 'discount') }}
+            </td>
+          </tr>
+          <tr v-if="sorted.length === 0">
+            <td :colspan="fiiColumns.length" class="empty">Nenhum FII encontrado.</td>
           </tr>
         </tbody>
       </table>
@@ -86,7 +140,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 
+const activeTab = ref('stocks')
 const stocks = ref([])
+const fiis = ref([])
 const loading = ref(false)
 const reloading = ref(false)
 const error = ref(null)
@@ -95,35 +151,60 @@ const sectorFilter = ref('')
 const sortColumn = ref('ticker')
 const sortAsc = ref(true)
 
+const currentData = computed(() => activeTab.value === 'stocks' ? stocks.value : fiis.value)
+
 const sectors = computed(() => {
-  const set = new Set(stocks.value.map(s => s.setorEconomico).filter(Boolean))
-  return ['', ...Array.from(set).sort()]
+  if (activeTab.value === 'stocks') {
+    const set = new Set(stocks.value.map(s => s.setorEconomico).filter(Boolean))
+    return Array.from(set).sort()
+  } else {
+    const set = new Set(fiis.value.map(f => f.sector).filter(Boolean))
+    return Array.from(set).sort()
+  }
 })
 
-const columns = [
+const stockColumns = [
   { key: 'ticker',              label: 'Ticker' },
   { key: 'companyName',         label: 'Empresa' },
   { key: 'setorEconomico',      label: 'Setor' },
-  { key: 'price',               label: 'Preço',           format: 'currency' },
-  { key: 'pl',                  label: 'P/L',             format: 'number' },
-  { key: 'pVp',                 label: 'P/VP',            format: 'number' },
-  { key: 'dy',                  label: 'DY',              format: 'percent' },
-  { key: 'roe',                 label: 'ROE',             format: 'percent' },
-  { key: 'lpa',                 label: 'LPA',             format: 'number' },
-  { key: 'vpa',                 label: 'VPA',             format: 'number' },
-  { key: 'dpa',                 label: 'DPA',             format: 'currency' },
-  { key: 'payout',              label: 'Payout',          format: 'percent' },
-  { key: 'lucrosCagr5',         label: 'CAGR L 5A',       format: 'percent' },
-  { key: 'crescimentoEsperado', label: 'Cresc. Esp.',     format: 'percent' },
-  { key: 'mediaCrescimento',    label: 'Méd. Cresc.',     format: 'percent' },
-  { key: 'pegRatio',            label: 'PEG',             format: 'number' },
-  { key: 'valorMercado',        label: 'Valor Mercado',   format: 'compact' },
-  { key: 'valuationBazin',      label: 'Bazin',           format: 'currency' },
-  { key: 'descontoBazin',       label: 'Desc. Bazin',     format: 'discount' },
-  { key: 'valuationGraham',     label: 'Graham',          format: 'currency' },
-  { key: 'descontoGraham',      label: 'Desc. Graham',    format: 'discount' },
-  { key: 'valuationGordon',     label: 'Gordon',          format: 'currency' },
-  { key: 'descontoGordon',      label: 'Desc. Gordon',    format: 'discount' },
+  { key: 'price',               label: 'Preço' },
+  { key: 'pl',                  label: 'P/L' },
+  { key: 'pVp',                 label: 'P/VP' },
+  { key: 'dy',                  label: 'DY' },
+  { key: 'roe',                 label: 'ROE' },
+  { key: 'lpa',                 label: 'LPA' },
+  { key: 'vpa',                 label: 'VPA' },
+  { key: 'dpa',                 label: 'DPA' },
+  { key: 'payout',              label: 'Payout' },
+  { key: 'lucrosCagr5',         label: 'CAGR L 5A' },
+  { key: 'crescimentoEsperado', label: 'Cresc. Esp.' },
+  { key: 'mediaCrescimento',    label: 'Méd. Cresc.' },
+  { key: 'pegRatio',            label: 'PEG' },
+  { key: 'valorMercado',        label: 'Valor Mercado' },
+  { key: 'valuationBazin',      label: 'Bazin' },
+  { key: 'descontoBazin',       label: 'Desc. Bazin' },
+  { key: 'valuationGraham',     label: 'Graham' },
+  { key: 'descontoGraham',      label: 'Desc. Graham' },
+  { key: 'valuationGordon',     label: 'Gordon' },
+  { key: 'descontoGordon',      label: 'Desc. Gordon' },
+]
+
+const fiiColumns = [
+  { key: 'ticker',              label: 'Ticker' },
+  { key: 'companyName',         label: 'Fundo' },
+  { key: 'sector',              label: 'Segmento' },
+  { key: 'price',               label: 'Cotação' },
+  { key: 'dy',                  label: 'DY' },
+  { key: 'pVp',                 label: 'P/VP' },
+  { key: 'lastDividend',        label: 'Últ. Div.' },
+  { key: 'percentualEmCaixa',   label: 'Caixa %' },
+  { key: 'dividendoCagr3Anos',  label: 'CAGR Div 3A' },
+  { key: 'cotaCagr3Anos',       label: 'CAGR Cota 3A' },
+  { key: 'liquidezMediaDiaria', label: 'Liquidez' },
+  { key: 'valuationBazinFII',   label: 'Bazin FII' },
+  { key: 'descontoBazinFII',    label: 'Desc. Bazin' },
+  { key: 'valuationGordonFII',  label: 'Gordon FII' },
+  { key: 'descontoGordonFII',   label: 'Desc. Gordon' },
 ]
 
 async function fetchStocks() {
@@ -140,18 +221,44 @@ async function fetchStocks() {
   }
 }
 
+async function fetchFIIs() {
+  loading.value = true
+  error.value = null
+  try {
+    const res = await fetch('/api/fiis')
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    fiis.value = await res.json()
+  } catch (e) {
+    error.value = e.message
+  } finally {
+    loading.value = false
+  }
+}
+
 async function reloadData() {
   reloading.value = true
   error.value = null
   try {
-    const res = await fetch('/api/reload', { method: 'POST' })
+    const url = activeTab.value === 'stocks' ? '/api/reload' : '/api/fiis/reload'
+    const res = await fetch(url, { method: 'POST' })
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
-    await fetchStocks()
+    if (activeTab.value === 'stocks') await fetchStocks()
+    else await fetchFIIs()
   } catch (e) {
     error.value = e.message
   } finally {
     reloading.value = false
   }
+}
+
+function switchTab(tab) {
+  activeTab.value = tab
+  filter.value = ''
+  sectorFilter.value = ''
+  sortColumn.value = 'ticker'
+  sortAsc.value = true
+  if (tab === 'stocks' && stocks.value.length === 0) fetchStocks()
+  if (tab === 'fiis' && fiis.value.length === 0) fetchFIIs()
 }
 
 function setSort(key) {
@@ -162,9 +269,10 @@ function setSort(key) {
 const filtered = computed(() => {
   const q = filter.value.toLowerCase()
   const sec = sectorFilter.value
-  return stocks.value.filter(s => {
-    const matchText = !q || s.ticker?.toLowerCase().includes(q) || s.companyName?.toLowerCase().includes(q)
-    const matchSector = !sec || s.setorEconomico === sec
+  return currentData.value.filter(item => {
+    const matchText = !q || item.ticker?.toLowerCase().includes(q) || item.companyName?.toLowerCase().includes(q)
+    const sectorField = activeTab.value === 'stocks' ? item.setorEconomico : item.sector
+    const matchSector = !sec || sectorField === sec
     return matchText && matchSector
   })
 })
@@ -235,11 +343,27 @@ body {
   flex-shrink: 0;
 }
 
-.toolbar-left { display: flex; align-items: baseline; gap: 12px; }
+.toolbar-left { display: flex; align-items: center; gap: 12px; }
 
 h1 { font-size: 18px; font-weight: 600; color: #7c9ef5; letter-spacing: 0.3px; }
 
-.stock-count { font-size: 12px; color: #64748b; }
+.tabs { display: flex; gap: 2px; }
+
+.tab-btn {
+  padding: 5px 14px;
+  border: 1px solid #2d3148;
+  border-radius: 6px;
+  background: transparent;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.tab-btn:hover { color: #94a3b8; border-color: #3d4260; }
+.tab-btn.active { background: #7c9ef5; color: #0f1117; border-color: #7c9ef5; font-weight: 600; }
+
+.item-count { font-size: 12px; color: #64748b; }
 
 .toolbar-right { display: flex; align-items: center; gap: 10px; }
 
