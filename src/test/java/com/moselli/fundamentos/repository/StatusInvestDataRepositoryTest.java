@@ -4,6 +4,8 @@ import com.moselli.fundamentos.entity.StatusInvestData;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -26,10 +28,12 @@ class StatusInvestDataRepositoryTest {
     @Inject
     StatusInvestDataRepository repository;
 
+    @BeforeEach
     @AfterEach
     void cleanup() {
         repository.deleteAll().block();
     }
+
 
     // -------------------------------------------------------------------------
     // Helpers

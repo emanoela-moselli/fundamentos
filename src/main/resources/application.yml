@@ -1,6 +1,11 @@
 micronaut:
   application:
     name: fundamentos
+  router:
+    static-resources:
+      default:
+        paths: classpath:public
+        mapping: /**
   http:
     services:
       status-invest:

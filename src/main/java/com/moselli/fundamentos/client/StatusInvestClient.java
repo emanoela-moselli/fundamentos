@@ -12,6 +12,9 @@ import static io.micronaut.http.HttpHeaders.ACCEPT;
 @Header(name = ACCEPT, value = "application/json")
 public interface StatusInvestClient {
 
-    @Get(StatusInvestConfig.STATUS_INVEST_API_URL_ENDPOINT+StatusInvestConfig.STATUS_INVEST_API_URL_FILTERS)
-    Mono<StatusInvestResponse> fetchData();
+    @Get(StatusInvestConfig.STATUS_INVEST_API_URL_ENDPOINT + StatusInvestConfig.STATUS_INVEST_STOCK_API_URL_FILTERS)
+    Mono<StatusInvestResponse> fetchStocksData();
+
+    @Get(StatusInvestConfig.STATUS_INVEST_API_URL_ENDPOINT + StatusInvestConfig.STATUS_INVEST_FII_API_URL_FILTERS)
+    Mono<StatusInvestResponse> fetchFiiData();
 }
