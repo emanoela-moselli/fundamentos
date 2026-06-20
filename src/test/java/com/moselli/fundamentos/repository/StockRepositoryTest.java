@@ -1,10 +1,9 @@
 package com.moselli.fundamentos.repository;
 
-import com.moselli.fundamentos.entity.StatusInvestData;
+import com.moselli.fundamentos.entity.Stock;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +12,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Integration tests for StatusInvestDataRepository.
+ * Integration tests for StockRepository.
  *
  * These tests require a live PostgreSQL instance. When running via Maven,
  * micronaut-test-resources-client (provided scope) wires the Micronaut Maven
@@ -23,10 +22,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * Test data uses ABCB4 values from the Monitor_de_Valuation_3.0.xlsx spreadsheet.
  */
 @MicronautTest
-class StatusInvestDataRepositoryTest {
+class StockRepositoryTest {
 
     @Inject
-    StatusInvestDataRepository repository;
+    StockRepository repository;
 
     @BeforeEach
     @AfterEach
@@ -39,8 +38,8 @@ class StatusInvestDataRepositoryTest {
     // Helpers
     // -------------------------------------------------------------------------
 
-    private StatusInvestData abcb4() {
-        StatusInvestData d = new StatusInvestData();
+    private Stock abcb4() {
+        Stock d = new Stock();
         d.setTicker("ABCB4");
         d.setCompanyId(1L);
         d.setCompanyName("Bco Abc Brasil S.A.");
@@ -55,8 +54,8 @@ class StatusInvestDataRepositoryTest {
         return d;
     }
 
-    private StatusInvestData bbas3() {
-        StatusInvestData d = new StatusInvestData();
+    private Stock bbas3() {
+        Stock d = new Stock();
         d.setTicker("BBAS3");
         d.setCompanyId(2L);
         d.setCompanyName("Bco Brasil S.A.");
@@ -79,7 +78,7 @@ class StatusInvestDataRepositoryTest {
     void save_and_findById_returns_correct_record() {
         repository.save(abcb4()).block();
 
-        StatusInvestData found = repository.findById("ABCB4").block();
+        Stock found = repository.findById("ABCB4").block();
 
         assertNotNull(found);
         assertEquals("ABCB4", found.getTicker());
@@ -92,7 +91,7 @@ class StatusInvestDataRepositoryTest {
 
     @Test
     void findById_returns_empty_for_unknown_ticker() {
-        StatusInvestData found = repository.findById("UNKNOWN").block();
+        Stock found = repository.findById("UNKNOWN").block();
         assertNull(found);
     }
 
@@ -105,7 +104,7 @@ class StatusInvestDataRepositoryTest {
         repository.save(abcb4()).block();
         repository.save(bbas3()).block();
 
-        List<StatusInvestData> all = repository.findAll().collectList().block();
+        List<Stock> all = repository.findAll().collectList().block();
 
         assertNotNull(all);
         assertEquals(2, all.size());
@@ -115,7 +114,7 @@ class StatusInvestDataRepositoryTest {
 
     @Test
     void findAll_returns_empty_list_when_no_data() {
-        List<StatusInvestData> all = repository.findAll().collectList().block();
+        List<Stock> all = repository.findAll().collectList().block();
         assertNotNull(all);
         assertTrue(all.isEmpty());
     }
@@ -131,15 +130,15 @@ class StatusInvestDataRepositoryTest {
 
         // Simulate what the service does: create a fresh instance (from API response)
         // with the same ticker and call update() — this is the "upsert" path used by
-        // FundamentosService.updateStatusInvestData(). Calling update() on a detached
+        // FundamentosService.updateStocks(). Calling update() on a detached
         // entity loaded in a separate reactive session causes Hibernate to open a new
         // session where the entity is not yet managed, leading to an INSERT attempt
         // rather than an UPDATE, which violates the PK constraint.
-        StatusInvestData refreshed = abcb4();
+        Stock refreshed = abcb4();
         refreshed.setPrice(16.50);
         repository.update(refreshed).block();
 
-        StatusInvestData found = repository.findById("ABCB4").block();
+        Stock found = repository.findById("ABCB4").block();
         assertNotNull(found);
         assertEquals(16.50, found.getPrice(), 1e-6);
     }

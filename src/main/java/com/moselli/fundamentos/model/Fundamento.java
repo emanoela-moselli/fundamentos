@@ -1,7 +1,7 @@
 package com.moselli.fundamentos.model;
 
 import com.moselli.fundamentos.entity.ClassificacaoB3;
-import com.moselli.fundamentos.entity.StatusInvestData;
+import com.moselli.fundamentos.entity.Stock;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
 import lombok.Getter;
@@ -59,7 +59,7 @@ public class Fundamento {
     private Double mediaCrescimento;
     private Double valorMercado;
 
-    public static Fundamento from(StatusInvestData data) {
+    public static Fundamento from(Stock data) {
         Fundamento f = new Fundamento();
         f.setTicker(data.getTicker());
         f.setCompanyId(data.getCompanyId());

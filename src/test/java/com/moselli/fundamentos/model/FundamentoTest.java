@@ -1,6 +1,6 @@
 package com.moselli.fundamentos.model;
 
-import com.moselli.fundamentos.entity.StatusInvestData;
+import com.moselli.fundamentos.entity.Stock;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,9 +21,9 @@ class FundamentoTest {
     // Helpers
     // -------------------------------------------------------------------------
 
-    private StatusInvestData abcb4() {
+    private Stock abcb4() {
         // Source: "Dados Status Invest" sheet, row 3
-        StatusInvestData d = new StatusInvestData();
+        Stock d = new Stock();
         d.setTicker("ABCB4");
         d.setCompanyName("Bco Abc Brasil S.A.");
         d.setPrice(15.0);
@@ -37,9 +37,9 @@ class FundamentoTest {
         return d;
     }
 
-    private StatusInvestData b3sa3() {
+    private Stock b3sa3() {
         // Source: "Dados Status Invest" sheet, row for B3SA3
-        StatusInvestData d = new StatusInvestData();
+        Stock d = new Stock();
         d.setTicker("B3SA3");
         d.setCompanyName("B3 S.A. - Brasil");
         d.setPrice(12.04);
@@ -177,7 +177,7 @@ class FundamentoTest {
     void graham_is_zero_when_grahamBase_negative() {
         // grahamBase = 22.5 * lpa * vpa — only zero-guarded when result is negative.
         // Requires exactly one of lpa/vpa to be negative (both negative → positive product).
-        StatusInvestData d = new StatusInvestData();
+        Stock d = new Stock();
         d.setTicker("TEST_NEG");
         d.setPrice(5.0);
         d.setLpa(-1.0);  // negative earnings
@@ -188,14 +188,14 @@ class FundamentoTest {
 
     @Test
     void all_null_inputs_do_not_throw() {
-        StatusInvestData d = new StatusInvestData();
+        Stock d = new Stock();
         d.setTicker("NULL1");
         assertDoesNotThrow(() -> Fundamento.from(d));
     }
 
     @Test
     void all_null_inputs_produce_zero_valuations() {
-        StatusInvestData d = new StatusInvestData();
+        Stock d = new Stock();
         d.setTicker("NULL1");
         Fundamento f = Fundamento.from(d);
         assertEquals(0.0, f.getDpa(), DELTA);
@@ -205,12 +205,12 @@ class FundamentoTest {
     }
 
     // -------------------------------------------------------------------------
-    // Field mapping — Fundamento.from() propagates all StatusInvestData fields
+    // Field mapping — Fundamento.from() propagates all Stock fields
     // -------------------------------------------------------------------------
 
     @Test
     void from_maps_all_identity_fields() {
-        StatusInvestData d = abcb4();
+        Stock d = abcb4();
         Fundamento f = Fundamento.from(d);
         assertEquals("ABCB4", f.getTicker());
         assertEquals("Bco Abc Brasil S.A.", f.getCompanyName());
