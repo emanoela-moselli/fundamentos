@@ -27,7 +27,7 @@ See [`docs/stock-model.md`](docs/stock-model.md) for full details.
 - Entity: `Stock` (table `stock`)
 - Repository: `StockRepository`
 - Model: `Fundamento` (adds valuation fields computed from raw `Stock` data)
-- API: `GET /api/all`, `POST /api/reload`
+- API: `GET /api/stocks`, `POST /api/stocks/reload`
 
 ### FIIs
 
@@ -60,7 +60,7 @@ The frontend is built and served as static resources by the backend. Open `http:
 
 ```bash
 # Reload stocks
-curl -X POST http://localhost:8080/api/reload
+curl -X POST http://localhost:8080/api/stocks/reload
 
 # Reload FIIs
 curl -X POST http://localhost:8080/api/fiis/reload
@@ -72,9 +72,8 @@ curl -X POST http://localhost:8080/api/fiis/reload
 
 | Method | Path | Description |
 |---|---|---|
-| `GET` | `/api/all` | All stocks with computed valuations |
-| `GET` | `/api/raw` | Raw stock data (no valuation fields) |
-| `POST` | `/api/reload` | Fetch and persist latest stock data from StatusInvest |
+| `GET` | `/api/stocks` | All stocks with computed valuations |
+| `POST` | `/api/stocks/reload` | Fetch and persist latest stock data from StatusInvest |
 | `GET` | `/api/fiis` | All FIIs with computed valuations |
 | `POST` | `/api/fiis/reload` | Fetch and persist latest FII data from StatusInvest |
 
