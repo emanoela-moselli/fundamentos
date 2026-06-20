@@ -1,5 +1,6 @@
 src/main/frontend/node_modules/
 src/main/resources/public/
+docs/excel/
 Thumbs.db
 .DS_Store
 .gradle
