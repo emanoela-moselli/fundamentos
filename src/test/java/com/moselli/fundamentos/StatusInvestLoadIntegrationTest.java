@@ -4,7 +4,7 @@ import com.moselli.fundamentos.client.StatusInvestApiItem;
 import com.moselli.fundamentos.client.StatusInvestClient;
 import com.moselli.fundamentos.client.StatusInvestResponse;
 import com.moselli.fundamentos.repository.FIIDataRepository;
-import com.moselli.fundamentos.repository.StatusInvestDataRepository;
+import com.moselli.fundamentos.repository.StockRepository;
 import com.moselli.fundamentos.service.FundamentosService;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
@@ -30,7 +30,7 @@ class StatusInvestLoadIntegrationTest {
     StatusInvestClient statusInvestClient;
 
     @Inject
-    StatusInvestDataRepository repository;
+    StockRepository repository;
 
     @Inject
     FIIDataRepository fiiDataRepository;
@@ -99,8 +99,8 @@ class StatusInvestLoadIntegrationTest {
     }
 
     @Test
-    void updateStatusInvestData_persists_stock_records_to_database() {
-        fundamentosService.updateStatusInvestData().block(Duration.ofSeconds(60));
+    void updateStocks_persists_stock_records_to_database() {
+        fundamentosService.updateStocks().block(Duration.ofSeconds(60));
 
         long count = repository.count().block(Duration.ofSeconds(10));
         assertTrue(count > 0, "Database should have records after reload");

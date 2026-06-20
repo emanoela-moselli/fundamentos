@@ -18,7 +18,7 @@ import java.util.Objects;
 @Entity
 @Introspected(includedAnnotations = Entity.class)
 @Serdeable
-public class StatusInvestData {
+public class Stock {
 
     @Id
     private String ticker;
@@ -96,7 +96,7 @@ public class StatusInvestData {
         Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        StatusInvestData that = (StatusInvestData) o;
+        Stock that = (Stock) o;
         return getTicker() != null && Objects.equals(getTicker(), that.getTicker());
     }
 

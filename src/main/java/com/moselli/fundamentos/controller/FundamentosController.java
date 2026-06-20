@@ -1,6 +1,6 @@
 package com.moselli.fundamentos.controller;
 
-import com.moselli.fundamentos.entity.StatusInvestData;
+import com.moselli.fundamentos.entity.Stock;
 import com.moselli.fundamentos.model.FII;
 import com.moselli.fundamentos.model.Fundamento;
 import com.moselli.fundamentos.service.FundamentosService;
@@ -22,7 +22,7 @@ public class FundamentosController {
 
     @Post("/reload")
     public Mono<String> reload() {
-        return fundamentosService.updateStatusInvestData().thenReturn("Reload Complete!");
+        return fundamentosService.updateStocks().thenReturn("Reload Complete!");
     }
 
     @Post("/fiis/reload")
@@ -31,7 +31,7 @@ public class FundamentosController {
     }
 
     @Get("/raw")
-    public Mono<List<StatusInvestData>> getRaw() {
+    public Mono<List<Stock>> getRaw() {
         return fundamentosService.findAll().collectList();
     }
 

@@ -3,9 +3,9 @@ package com.moselli.fundamentos.service;
 import com.moselli.fundamentos.client.StatusInvestApiItem;
 import com.moselli.fundamentos.client.StatusInvestClient;
 import com.moselli.fundamentos.entity.FIIData;
-import com.moselli.fundamentos.entity.StatusInvestData;
+import com.moselli.fundamentos.entity.Stock;
 import com.moselli.fundamentos.repository.FIIDataRepository;
-import com.moselli.fundamentos.repository.StatusInvestDataRepository;
+import com.moselli.fundamentos.repository.StockRepository;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.extern.java.Log;
@@ -17,7 +17,7 @@ import reactor.core.publisher.Mono;
 public class FundamentosService {
 
     @Inject
-    private StatusInvestDataRepository statusInvestDataRepository;
+    private StockRepository stockRepository;
 
     @Inject
     private FIIDataRepository fiiDataRepository;
@@ -25,12 +25,12 @@ public class FundamentosService {
     @Inject
     private StatusInvestClient statusInvestClient;
 
-    public Mono<Void> updateStatusInvestData() {
-        return statusInvestDataRepository.deleteAll()
+    public Mono<Void> updateStocks() {
+        return stockRepository.deleteAll()
                 .then(statusInvestClient.fetchStocksData())
                 .flatMapMany(response -> Flux.fromIterable(response.getList()))
-                .map(FundamentosService::toStockEntity)
-                .flatMap(statusInvestDataRepository::save)
+                .map(FundamentosService::toStock)
+                .flatMap(stockRepository::save)
                 .doOnError(e -> log.severe("Failed to reload stocks data: " + e.getMessage()))
                 .onErrorResume(e -> Flux.empty())
                 .doOnComplete(() -> log.info("Stocks reload complete"))
@@ -49,16 +49,16 @@ public class FundamentosService {
                 .then();
     }
 
-    public Flux<StatusInvestData> findAll() {
-        return statusInvestDataRepository.findAll();
+    public Flux<Stock> findAll() {
+        return stockRepository.findAll();
     }
 
     public Flux<FIIData> findAllFII() {
         return fiiDataRepository.findAll();
     }
 
-    private static StatusInvestData toStockEntity(StatusInvestApiItem item) {
-        StatusInvestData e = new StatusInvestData();
+    private static Stock toStock(StatusInvestApiItem item) {
+        Stock e = new Stock();
         e.setTicker(item.getTicker());
         e.setCompanyId(item.getCompanyId());
         e.setCompanyName(item.getCompanyName());
